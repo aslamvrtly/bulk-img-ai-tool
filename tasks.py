@@ -3,6 +3,9 @@ import os
 import zipfile
 import sqlite3
 from gemini_image import generate_image
+from dotenv import load_dotenv
+
+load_dotenv() 
 
 DATABASE = "jobs.db"
 

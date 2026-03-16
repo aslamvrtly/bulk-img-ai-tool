@@ -1,11 +1,8 @@
 from google import genai
 from google.genai import types
 from PIL import Image
-from dotenv import load_dotenv
 import base64
 import os
-
-load_dotenv() 
 
 api_key = os.environ.get("GEMINI_API")
 client = genai.Client(api_key=api_key)
