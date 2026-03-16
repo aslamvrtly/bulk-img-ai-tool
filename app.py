@@ -8,7 +8,7 @@ import shutil
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "upload"
-DATABASE = "jobs.db"
+DATABASE = "data/jobs.db"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 def get_db():

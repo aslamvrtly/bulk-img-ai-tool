@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv() 
 
-DATABASE = "jobs.db"
+DATABASE = "data/jobs.db"
 
 @celery.task
 def generate_images(job_id):
