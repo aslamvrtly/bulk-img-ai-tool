@@ -5,17 +5,17 @@ import uuid
 from tasks import generate_images
 import shutil
 
-conn = sqlite3.connect("jobs.db")
-cursor = conn.cursor()
-
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "upload"
 DATABASE = "jobs.db"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
+def get_db():
+    return sqlite3.connect(DATABASE, timeout=30)
+
 def init_db():
-    conn = sqlite3.connect(DATABASE)
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -51,7 +51,7 @@ def generate_file(id, filename):
 @app.route("/")
 def home():
 
-    conn = sqlite3.connect(DATABASE)
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("SELECT * FROM jobs ORDER BY id")
@@ -64,7 +64,7 @@ def home():
 @app.route("/job-stats")
 def job_stats():
 
-    conn = sqlite3.connect(DATABASE)
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute("SELECT COUNT(*) FROM jobs")
@@ -89,7 +89,7 @@ def job_stats():
 @app.route("/jobs")
 def jobs():
 
-    conn = sqlite3.connect(DATABASE)
+    conn = get_db()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
@@ -128,7 +128,7 @@ def create_job():
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     reference.save(filepath)
 
-    conn = sqlite3.connect(DATABASE)
+    conn = get_db()
     cursor = conn.cursor()
 
     cursor.execute(
@@ -147,7 +147,7 @@ def create_job():
 @app.route("/delete-job/<id>")
 def delete_job(id):
 
-    conn = sqlite3.connect(DATABASE)
+    conn = get_db()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
