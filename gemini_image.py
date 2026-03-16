@@ -1,9 +1,14 @@
 from google import genai
 from google.genai import types
 from PIL import Image
+from dotenv import load_dotenv
 import base64
+import os
 
-client = genai.Client(api_key="AIzaSyDUcz_dPduCScarQpElQB6H3MaKzK3LAZs")
+load_dotenv() 
+
+api_key = os.environ.get("GEMINI_API")
+client = genai.Client(api_key=api_key)
 
 def generate_image(prompt, reference_path, output_path):
 
