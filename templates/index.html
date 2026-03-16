@@ -1,0 +1,236 @@
+<!doctype html>
+<html>
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>AI Product Generator</title>
+  </head>
+
+  <body>
+    
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12 col-md-3 mb-3">
+                <div class="section text-center">
+                    <h4 class="fw-bold" id="totalJobs">0</h4>
+                    <h5 class="fw-bold text-primary">TOTAL</h5>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 mb-3">
+                <div class="section text-center">
+                    <h4 class="fw-bold" id="queuedJobs">0</h4>
+                    <h5 class="fw-bold text-warning">QUEUE</h5>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 mb-3">
+                <div class="section text-center">
+                    <h4 class="fw-bold" id="successJobs">0</h4>
+                    <h5 class="fw-bold text-success">SUCCESS</h5>
+                </div>
+            </div>
+            <div class="col-12 col-md-3 mb-3">
+                <div class="section text-center">
+                    <h4 class="fw-bold" id="failedJobs">0</h4>
+                    <h5 class="fw-bold text-danger">FAILED</h5>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="section">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="text-center fw-bold text-uppercase bg-primary text-white px-3 py-1" style="width: fit-content;">Requested Images</h6>
+                        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add Item</button>
+                    </div>                    
+                    <table class="table table-striped align-middle mt-4">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Reference</th>
+                                <th scope="col">Image 1</th>
+                                <th scope="col">Image 2</th>
+                                <th scope="col">Image 3</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in jobs %}
+                                <tr>
+                                    <th scope="row">{{ loop.index }}</th>
+                                    <td>{{job[1]}}</td>
+                                    <td>
+                                        <img src="{{ url_for('uploaded_file', filename=job[5]) }}" width="45" style="border-radius: 5px;">
+                                    </td>
+                                
+                                    <td>
+                                        <img src="{{ url_for('static', filename='img/image.png') }}" width="45" style="border-radius: 5px;">
+                                    </td>
+
+                                    <td>
+                                        <img src="{{ url_for('static', filename='img/image.png') }}" width="45" style="border-radius: 5px;">
+                                    </td>
+
+                                    <td>
+                                        <img src="{{ url_for('static', filename='img/image.png') }}" width="45" style="border-radius: 5px;">
+                                    </td>
+                                    <td class="text-uppercase">{{job[6]}}</td>
+                                    <td>
+                                        <a href="/delete-job/{{job[0]}}" class="btn btn-danger p-1 px-2" onclick="return confirm('Are you sure?')"><i class="bi bi-trash" style="font-size: 14px;"></i></a>
+                                        <button class="btn btn-success p-1 px-2"><i class="bi bi-download" style="font-size: 14px;"></i></button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-12 mt-3">
+
+            </div>
+        </div>
+    </div> 
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Item</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="/create-job" method="post" enctype="multipart/form-data">
+        <div class="modal-body">
+                <div class="mb-3">
+                    <label for="reference" class="form-label">Reference</label>
+                    <input type="file" class="form-control" name="reference" id="reference" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" name="title" id="title" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="type">Type : </label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="type" id="inlineRadio1" value="rhinestone">
+                        <label class="form-check-label" for="inlineRadio1">Rhinestone</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="type" id="inlineRadio2" value="yarn">
+                        <label class="form-check-label" for="inlineRadio2">Yarn</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="type" id="inlineRadio3" value="other">
+                        <label class="form-check-label" for="inlineRadio3">Other</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="prompt1" class="form-label">Prompt 1</label>
+                    <textarea rows="2" class="form-control" id="prompt1" name="prompt1" required></textarea>
+                </div>
+
+                 <div class="mb-3">
+                    <label for="prompt2" class="form-label">Prompt 2</label>
+                    <textarea rows="2" class="form-control" id="prompt2" name="prompt2" ></textarea>
+                </div>
+
+                 <div class="mb-3">
+                    <label for="prompt3" class="form-label">Prompt 3</label>
+                    <textarea rows="2" class="form-control" id="prompt3" name="prompt3" ></textarea>
+                </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+        </div>
+            </form>
+        </div>
+    </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
+    <script>
+
+        let table = 
+            $('table').DataTable({
+                ajax: "/jobs",
+                columns: [
+                    { data: null, render: (data, type, row, meta) => meta.row + 1 },
+                    { data: "title" },
+                    { data: "reference", render: data => `<img src="/uploads/${data}" width="45" style="border-radius:5px;">` },
+                    { data: "img1", render: (data) => `<img src="${data}" width="45" style="border-radius:5px;">` },
+                    { data: "img2", render: (data) => `<img src="${data}" width="45" style="border-radius:5px;">` },
+                    { data: "img3", render: (data) => `<img src="${data}" width="45" style="border-radius:5px;">` },
+                    { data: "status", render: data => `<span class="text-uppercase">${data}</span>` },
+                    { data: "id", render: (id, type, row) => `
+                        <a href="/delete-job/${id}" onclick="return confirm('Are you sure?')" class="btn btn-danger p-1 px-2">
+                            <i class="bi bi-trash" style="font-size:14px;"></i>
+                        </a>
+                        ${ row.status == "Done" ?
+                        `<a class="btn btn-success p-1 px-2" href="${row.zip}" download>
+                            <i class="bi bi-download" style="font-size:14px;"></i>
+                        </a>` : ""    
+                    }
+                    `}
+                ]
+            });
+
+        $("input[type=radio][name=type]").on('change', function() {
+            let selected = $(this).val()
+
+            if(selected == "rhinestone"){
+                $("#prompt1").val("Create a professional ecommerce product photograph using the uploaded image as the exact reference for the stone. Keep the stone identical to the reference image including shape, color, reflections, and facets. Place the stone centered on a clean pure white background. Soft studio lighting, subtle natural shadow below the stone, ultra sharp macro product photography, high clarity, luxury jewelry catalog style, minimal composition, no extra objects, square 1:1 composition, Shopify product image style.")
+                $("#prompt2").val("Create a luxury lifestyle product photograph using the uploaded image as the exact reference for the stone. Keep the stone identical to the reference image including shape, color, reflections, and facets. Place the stone naturally on a textured rock surface in an outdoor environment. Soft natural sunlight hitting the stone creating small rainbow reflections. Blurred green leaves in the background with cinematic depth of field. Ultra realistic macro photography, premium jewelry advertisement style, soft shadows, high detail, elegant atmosphere, square 1:1 composition.")
+                $("#prompt3").val("Create a tailoring and embroidery themed product photograph using the uploaded image as the exact reference for the stone. Keep the stone identical to the reference image including shape, color, reflections, and facets. Place the stone on elegant fabric used for embroidery. A sewing needle and thread should be visible near the stone showing it being stitched onto the fabric. Soft studio lighting, shallow depth of field, luxury craft atmosphere, ultra realistic macro photography, textile texture visible, square 1:1 composition.")
+            }else if(selected == "yarn"){
+                $("#prompt1").val("Create an ultra-realistic professional ecommerce product photograph using the uploaded product image as reference. Keep the product design, logo, label, colors, and details exactly the same as the original product. Place the product centered on a clean pure white studio background with soft professional studio lighting and a subtle natural shadow under the product. The product should be slightly zoomed out so the entire item is clearly visible, perfectly centered. Extremely sharp focus, high-end commercial product photography style, minimal, premium ecommerce look, 1:1 square aspect ratio, suitable for Shopify product pages.")
+                $("#prompt2").val("Generate a luxury product advertisement image using the uploaded product image as reference. Keep the product exactly the same as the original image including logo, label, colors, and design. Place the product floating slightly above a soft blurred background inspired by the product’s own material or texture. Add cinematic lighting and depth with a soft shadow below the floating product. The background should feel elegant and premium while keeping the product as the clear focus. Ultra-realistic commercial product photography style, dramatic lighting, shallow depth of field, 1:1 square aspect ratio, premium brand marketing look.")
+                $("#prompt3").val("")
+            }else{
+                $("#prompt1").val("")
+                $("#prompt2").val("")
+                $("#prompt3").val("")
+            }
+        })
+
+        setInterval(() => {
+            updateStats();
+            table.ajax.reload(null, false)
+        }, 3000)
+
+        function updateStats() {
+            fetch("/job-stats")
+                .then(res => res.json())
+                .then(data => {
+
+                    document.getElementById("totalJobs").innerText = data.total
+                    document.getElementById("queuedJobs").innerText = data.queued
+                    document.getElementById("successJobs").innerText = data.success
+                    document.getElementById("failedJobs").innerText = data.failed
+
+                })
+        }
+
+        updateStats()
+
+    </script>
+</body>
+</html>
