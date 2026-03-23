@@ -5,6 +5,7 @@ import base64
 import os
 
 api_key = os.environ.get("GEMINI_API")
+gemini_model = os.environ.get("GEMINI_MODEL")
 client = genai.Client(api_key=api_key)
 
 def generate_image(prompt, reference_path, output_path):
@@ -12,7 +13,7 @@ def generate_image(prompt, reference_path, output_path):
     reference = Image.open(reference_path)
 
     response = client.models.generate_content(
-        model="gemini-3.1-flash-image-preview",
+        model=gemini_model,
         contents=[prompt, reference],
         config=types.GenerateContentConfig(
             image_config=types.ImageConfig(
