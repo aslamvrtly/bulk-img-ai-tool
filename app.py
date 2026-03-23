@@ -180,5 +180,20 @@ def delete_job(id):
     return redirect("/")
 
 
+@app.route("/restart-job/<id>")
+def restart_job(id):
+
+    conn = get_db()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    cursor.execute("UPDATE jobs SET status='Processing' WHERE id=?", (id,))
+    conn.commit()
+    generate_images.delay(id)
+    conn.close()
+
+    return redirect("/")
+
+
 if __name__ == "__main__":
     app.run(debug=True)

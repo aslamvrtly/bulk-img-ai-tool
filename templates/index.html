@@ -64,32 +64,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for job in jobs %}
-                                <tr>
-                                    <th scope="row">{{ loop.index }}</th>
-                                    <td>{{job[1]}}</td>
-                                    <td>
-                                        <img src="{{ url_for('uploaded_file', filename=job[5]) }}" width="45" style="border-radius: 5px;">
-                                    </td>
-                                
-                                    <td>
-                                        <img src="{{ url_for('static', filename='img/image.png') }}" width="45" style="border-radius: 5px;">
-                                    </td>
-
-                                    <td>
-                                        <img src="{{ url_for('static', filename='img/image.png') }}" width="45" style="border-radius: 5px;">
-                                    </td>
-
-                                    <td>
-                                        <img src="{{ url_for('static', filename='img/image.png') }}" width="45" style="border-radius: 5px;">
-                                    </td>
-                                    <td class="text-uppercase">{{job[6]}}</td>
-                                    <td>
-                                        <a href="/delete-job/{{job[0]}}" class="btn btn-danger p-1 px-2" onclick="return confirm('Are you sure?')"><i class="bi bi-trash" style="font-size: 14px;"></i></a>
-                                        <button class="btn btn-success p-1 px-2"><i class="bi bi-download" style="font-size: 14px;"></i></button>
-                                    </td>
-                                </tr>
-                            {% endfor %}
+                          
                         </tbody>
                     </table>
                 </div>
@@ -181,12 +156,14 @@
                     { data: "img3", render: (data) => `<img src="${data}" width="45" style="border-radius:5px;">` },
                     { data: "status", render: data => `<span class="text-uppercase">${data}</span>` },
                     { data: "id", render: (id, type, row) => `
-                        <a href="/delete-job/${id}" onclick="return confirm('Are you sure?')" class="btn btn-danger p-1 px-2">
+                        <a href="/delete-job/${id}" onclick="return confirm('Are you sure to delete?')" class="btn btn-danger p-1 px-2">
                             <i class="bi bi-trash" style="font-size:14px;"></i>
                         </a>
                         ${ row.status == "Done" ?
                         `<a class="btn btn-success p-1 px-2" href="${row.zip}" download>
                             <i class="bi bi-download" style="font-size:14px;"></i>
+                        </a>` : row.status == "Failed" ? `<a class="btn btn-primary p-1 px-2" onclick="return confirm('Are you sure to restart?')" href="/restart-job/${id}" >
+                            <i class="bi bi-arrow-clockwise" style="font-size:14px;"></i>
                         </a>` : ""    
                     }
                     `}
